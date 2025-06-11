@@ -21,7 +21,7 @@ class App(ctk.CTk):
         self.login_frame.pack(fill="both", expand=True)
 
         #Define o ícone da página
-        self.iconbitmap("imagens/efeito_estufa.ico")
+        self.iconbitmap("imagens/efeito_estufa.png")
 
         #Cria a tabela usuários se não existir
         criar_tabela_usuarios()
@@ -74,7 +74,11 @@ class App(ctk.CTk):
         self._abrir_pagina(Pagina_graficos)
 
     def abrir_usuarios(self):
-        self._abrir_pagina(lambda parent: Pagina_usuarios(parent, self.abrir_popup_edicao))
+        def abrir_pagina_usuarios(parent):
+            self.pagina_usuarios = Pagina_usuarios(parent, self.abrir_dialogo_edicao)
+            return self.pagina_usuarios
+
+        self._abrir_pagina(abrir_pagina_usuarios)
 
     def abrir_pagina_bd(self):
         self._abrir_pagina(Pagina_bd)
@@ -102,35 +106,19 @@ class App(ctk.CTk):
         self.cadastro_frame = Tela_cadastro(self, self.mostrar_login)
         self.cadastro_frame.pack(fill="both", expand=True)
 
-    def abrir_popup_edicao(self, id_usuario, nome_usuario, atualizar_callback):
-        popup = ctk.CTkToplevel(self)
-        popup.title("Editar Usuário")
-        popup.geometry("300x200")
-        popup.iconbitmap("imagens/efeito_estufa.ico")
+    def abrir_dialogo_edicao(self, id_usuario, nome_usuario, callback_atualizar_lista):
+        EditarUsuarioDialog(
+            parent=self,
+            id_usuario=id_usuario,
+            nome_atual=nome_usuario,
+            callback_atualizar_lista=callback_atualizar_lista,
+            callback_status_label=self._atualizar_status_usuarios
+        )
 
-        entrada_usuario = ctk.CTkEntry(popup, placeholder_text="Novo nome", textvariable=ctk.StringVar(value=nome_usuario))
-        entrada_usuario.pack(pady=10)
-
-        entrada_senha = ctk.CTkEntry(popup, placeholder_text="Nova senha", show="*")
-        entrada_senha.pack(pady=10)
-
-        mensagem = ctk.CTkLabel(popup, text="")
-        mensagem.pack(pady=5)
-
-        def salvar():
-            novo_nome = entrada_usuario.get().strip()
-            nova_senha = entrada_senha.get().strip()
-            if novo_nome and nova_senha:
-                try:
-                    atualizar_usuario(id_usuario, novo_nome, nova_senha)
-                    atualizar_callback()
-                    popup.destroy()
-                except Exception as e:
-                    mensagem.configure(text=f"Erro: {e}", text_color="red")
-            else:
-                mensagem.configure(text="Preencha todos os campos", text_color="red")
-
-        ctk.CTkButton(popup, text="Salvar", command=salvar).pack(pady=10)
+    def _atualizar_status_usuarios(self, mensagem, cor="white"):
+        # Supondo que você tenha uma referência para a página atual
+        if hasattr(self, 'pagina_usuarios'):
+            self.pagina_usuarios._atualizar_status_label(mensagem, cor)
 
 # Tela de login
 class Tela_login(ctk.CTkFrame):

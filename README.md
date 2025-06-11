@@ -206,4 +206,5 @@ Capturas de tela estarão disponíveis na pasta /screenshots do repositório Git
 ● requirements.txt: Dependências da aplicação
 
 **Relatório:**
-[Relatório-Final.docx](https://github.com/user-attachments/files/20684105/Relatorio-Final.docx)
+
+[Relatorio-Final.pdf](https://github.com/user-attachments/files/20696065/Relatorio-Final.pdf)

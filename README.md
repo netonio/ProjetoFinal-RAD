@@ -135,17 +135,17 @@ Estufatos
 
 Capturas de tela estarão disponíveis na pasta /screenshots do repositório GitHub:
 
-●	screenshot-paginalogin.png: Demonstração do menu lateral e da página inicial
+●	screenshot-paginalogin.png: Demonstração da tela de login
 
-●	screenshot-paginacadastro.png: Demonstração do menu lateral e da página inicial
+●	screenshot-paginacadastro.png: Demonstração da tela de cadastro
 
 ●	screenshot-paginainicio.png: Demonstração do menu lateral e da página inicial.
 
-●	screenshot-paginagrafico.png: Exemplo da página inicial com conteúdo rolado.
+●	screenshot-paginagrafico.png: Demonstração da página gráficos
 
-●	screenshot-paginausuarios.png: Mostra a adaptação do layout ao redimensionar a janela.
+●	screenshot-paginausuarios.png: Demonstração da página usuários
 
-●	screenshot-paginadados.png: Demonstração do menu lateral e da página inicial
+●	screenshot-paginadados.png: Demonstração da página dados
 
 # 9. Conclusão
   O desenvolvimento do projeto Estufatos trouxe conhecimentos fundamentais sobre o efeito estufa no Brasil e os desafios enfrentados na mitigação dos impactos climáticos. A implementação de tecnologias inteligentes possibilita um monitoramento mais preciso e um maior embasamento para políticas ambientais eficazes.
@@ -207,4 +207,5 @@ Capturas de tela estarão disponíveis na pasta /screenshots do repositório Git
 
 ● requirements.txt: Dependências da aplicação
 
-
+**Relatório:**
+[Relatório-Final.docx](https://github.com/user-attachments/files/20684105/Relatorio-Final.docx)

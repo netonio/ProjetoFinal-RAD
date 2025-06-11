@@ -121,13 +121,31 @@ Estufatos
 
 **Prints das Telas**
 
+![screenshot-paginalogin](https://github.com/user-attachments/assets/d9a41a36-b0fb-4a74-9a4c-3c5c404df231)
+
+![screenshot-paginacadastro](https://github.com/user-attachments/assets/fd1e7bc8-5baf-42bb-83df-164c0c9d8545)
+
+![screenshot-paginainicio](https://github.com/user-attachments/assets/1fb50352-ef49-4a26-8c0a-3d55ecfe2909)
+
+![screenshot-paginagrafico](https://github.com/user-attachments/assets/6f634bfd-f799-4da3-83d2-2d900f3941f5)
+
+![screenshot-paginausuarios](https://github.com/user-attachments/assets/3fec386d-cda2-4ba2-b680-e2f21170593c)
+
+![screenshot-paginadados](https://github.com/user-attachments/assets/8d6dafb9-93c1-414b-91be-d7edac171e3a)
+
 Capturas de tela estarão disponíveis na pasta /screenshots do repositório GitHub:
 
-●	screenshot_menu_inicio.png: Demonstração do menu lateral e da página inicial.
+●	screenshot-paginalogin.png: Demonstração do menu lateral e da página inicial
 
-●	screenshot_pagina_inicio_scroll.png: Exemplo da página inicial com conteúdo rolado.
+●	screenshot-paginacadastro.png: Demonstração do menu lateral e da página inicial
 
-●	screenshot_responsividade.png: Mostra a adaptação do layout ao redimensionar a janela.
+●	screenshot-paginainicio.png: Demonstração do menu lateral e da página inicial.
+
+●	screenshot-paginagrafico.png: Exemplo da página inicial com conteúdo rolado.
+
+●	screenshot-paginausuarios.png: Mostra a adaptação do layout ao redimensionar a janela.
+
+●	screenshot-paginadados.png: Demonstração do menu lateral e da página inicial
 
 # 9. Conclusão
   O desenvolvimento do projeto Estufatos trouxe conhecimentos fundamentais sobre o efeito estufa no Brasil e os desafios enfrentados na mitigação dos impactos climáticos. A implementação de tecnologias inteligentes possibilita um monitoramento mais preciso e um maior embasamento para políticas ambientais eficazes.
@@ -163,9 +181,9 @@ Capturas de tela estarão disponíveis na pasta /screenshots do repositório Git
 
 **Instalação:**
 
-● git clone https://github.com/seu-usuario/seu-repositorio.git
+● git clone https://github.com/netonio/ProjetoFinal-RAD.git
 
-● cd seu-repositorio
+● cd seu-repositorio (crie uma pasta para armazenar os arquivos)
 
 ● pip install -r requirements.txt
 

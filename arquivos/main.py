@@ -246,20 +246,33 @@ class Pagina_inicio(ctk.CTkFrame):
 
         # Dados das seções para recriar quando necessário
         # Formato: (titulo, texto, caminho_da_imagem)
-        # Usar None se não houver imagem para a seção
+        # Use None se não houver imagem para a seção
         self.section_data = [
             ("O que é o Efeito Estufa?",
              "O efeito estufa é um processo natural e essencial para a vida na Terra. Ele ocorre quando certos gases na atmosfera — como dióxido de carbono (CO2), metano (CH4) e vapor d'água — retêm parte do calor irradiado pela superfície do planeta.Essa retenção de calor é crucial para manter a temperatura média da Terra em níveis que permitem a existência de água líquida e, consequentemente, da vida. Sem o efeito estufa, nosso planeta seria um lugar muito gelado e inabitável.",
-             "imagens/efeito_estufa.png"), 
+             "efeito_estufa.png"), 
             ("Como funciona?",
              "Funciona assim: a luz solar atravessa a atmosfera e aquece a Terra. Parte desse calor é refletido de volta para o espaço. No entanto, os gases de efeito estufa presentes na atmosfera absorvem e reirradiam esse calor em todas as direções, inclusive de volta para a superfície. Esse processo aprisiona o calor, elevando a temperatura do planeta. É um equilíbrio delicado que mantém nosso clima estável e adequado para a vida.",
-             "imagens/funcionamento.png"),
+             "funcionamento.png"),
             ("Efeitos do aquecimento global",
              "O aquecimento global é o agravamento do efeito estufa natural devido às atividades humanas. A queima de combustíveis fósseis (carvão, petróleo, gás) e o desmatamento liberam um excesso de gases de efeito estufa na atmosfera, intensificando a retenção de calor e elevando a temperatura média da Terra. As consequências são severas e globais: degelo polar, elevação do nível do mar, eventos climáticos extremos (ondas de calor, secas, inundações) e impactos na biodiversidade. Compreender isso é vital para a busca por soluções climáticas.",
              None),
             ("Anos de Pico de Emissões no Brasil (1990-2019)",
              "Entre 1990 e 2019, as emissões de gases do efeito estufa (GEE) no Brasil foram fortemente influenciadas pelo desmatamento. Os anos de **maior emissão** ocorreram principalmente no **início dos anos 2000, com picos notáveis por volta de 2004 e 2005**, devido às altas taxas de devastação da Amazônia para a expansão da agropecuária. Apesar de uma queda significativa de 2005 a 2012, as emissões voltaram a crescer a partir de **2013**, com **2019** registrando outro aumento considerável, novamente impulsionado pelo desmatamento. Além da mudança de uso da terra, a agropecuária e a energia também foram contribuintes importantes nesse período.",
-             "imagens/grafico.png") 
+             "grafico.png"),
+            # --- Tópicos sobre os gases específicos solicitados ---
+            ("Dióxido de Carbono (CO2)",
+             "O **Dióxido de Carbono (CO2)** é o gás de efeito estufa mais emitido por atividades humanas e o principal responsável pelo aquecimento global. Sua emissão é predominantemente causada pela queima de combustíveis fósseis (carvão, petróleo e gás natural) em processos industriais, geração de energia, transportes e aquecimento. Além disso, o desmatamento, que libera o carbono armazenado em árvores e solos, também contribui significativamente para o aumento das concentrações de CO2 na atmosfera.",
+             None),
+            ("HFC-125 (Pentafluoroetano)",
+             "O **HFC-125** é um hidrofluorcarbono (HFC) e um potente gás de efeito estufa sintético. Ele é amplamente utilizado como agente extintor de incêndio, substituindo os antigos halons que danificavam a camada de ozônio. Também pode ser encontrado em algumas misturas refrigerantes. Embora seja uma alternativa aos produtos que afetam o ozônio, o HFC-125 tem um alto potencial de aquecimento global, contribuindo para o efeito estufa.",
+             None),
+            ("HFC-134a (Tetrafluoroetano)",
+             "O **HFC-134a** é outro hidrofluorcarbono com um impacto significativo no efeito estufa. É um dos refrigerantes mais comuns, utilizado em sistemas de ar condicionado automotivo e residencial, bem como em aerossóis e alguns produtos de espuma. Sua popularidade cresceu como substituto de substâncias que esgotavam a camada de ozônio, mas seu elevado potencial de aquecimento global o torna uma preocupação ambiental.",
+             None),
+            ("HFC-143a (1,1,1-Trifluoroetano)",
+             "O **HFC-143a** é um terceiro hidrofluorcarbono potente. Ele é frequentemente usado como um componente em misturas refrigerantes, especialmente em sistemas de refrigeração de alta temperatura, e também pode ser encontrado em aerossóis e aplicações de isolamento. Assim como outros HFCs, o HFC-143a foi desenvolvido para substituir substâncias danosas ao ozônio, mas contribui substancialmente para o aquecimento global devido ao seu alto potencial de retenção de calor.",
+             None)
         ]
 
         # Cria seções iniciais

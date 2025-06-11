@@ -1,7 +1,5 @@
 # ProjetoFinal-RAD
 
-#Relatório: Efeito Estufa no Brasil – Projeto Estufatos
-
 # 1. Título do Projeto 
 Estufatos 
 

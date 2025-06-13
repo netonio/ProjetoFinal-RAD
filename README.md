@@ -1,7 +1,7 @@
 # ProjetoFinal-RAD
 
 # 1. Título do Projeto 
-Estufatos 
+"Estufatos"
 
 # 2. Introdução
   O Brasil, com seus vastos biomas e recursos naturais, desempenha um papel vital na regulação climática global. A Amazônia, por exemplo, é um dos principais sumidouros de carbono do planeta, contribuindo para a redução dos impactos das emissões de gases de efeito estufa (GEE). No entanto, o avanço da agropecuária, exploração madeireira e urbanização tem intensificado a degradação ambiental, resultando em um aumento expressivo das emissões de CO₂ e outros GEE. As consequências desse fenômeno afetam não apenas o clima nacional, mas também influenciam padrões climáticos globais.
@@ -207,4 +207,4 @@ Capturas de tela estarão disponíveis na pasta /screenshots do repositório Git
 
 **Relatório:**
 
-[Relatorio-Final.pdf](https://github.com/user-attachments/files/20696065/Relatorio-Final.pdf)
+[Relatorio-Final.pdf](https://github.com/user-attachments/files/20728896/Relatorio-Final.pdf)

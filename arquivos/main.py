@@ -9,51 +9,48 @@ from tkinter import filedialog
 from db import *
 from graficos import *
 
-# Classe principal da aplicação
+#Classe principal da aplicação
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
 
+        # Tenta carregar o ícone da janela
         try:
             icon_image = Image.open("imagens/efeito_estufa_icone.png")
             icon_photo = ImageTk.PhotoImage(icon_image)
             self.iconphoto(False, icon_photo)
-            self._icon_image_ref = icon_photo
+            self._icon_image_ref = icon_photo  # Evita o garbage collection da imagem
         except Exception as e:
             print("Erro ao carregar ícone:", e)
 
-        self.geometry("950x500") #Tamanho da janela
-        self.title("Estufatos") #Título da janela
+        # Configurações iniciais da janela
+        self.geometry("950x500")  # Define o tamanho da janela
+        self.title("Estufatos")  # Define o título da janela
 
-        #Inicia com o login frame
+        # Exibe a tela de login ao iniciar
         self.login_frame = Tela_login(self, self.entrar)
         self.login_frame.pack(fill="both", expand=True)
 
-
-
-        #Cria a tabela usuários se não existir
+        # Garante que a tabela de usuários exista no banco de dados
         criar_tabela_usuarios()
 
-    #Função para Login
+    # Função chamada ao tentar fazer login
     def entrar(self, usuario, senha):
-        #Busca o usuário e senha no banco de dados, se achar, abre a página início
-        user = buscar_usuario_senha(usuario, senha)
+        user = buscar_usuario_senha(usuario, senha)  # Verifica se as credenciais são válidas
         if user:
-            self.login_frame.destroy()
-            self.menu_principal()
-            self.abrir_inicio()
+            self.login_frame.destroy()  # Remove a tela de login
+            self.menu_principal()  # Cria o menu lateral
+            self.abrir_inicio()  # Abre a página inicial
         else:
-            #Se não, retorna o erro:
-            self.login_frame.mensagem("Usuário ou senha incorretos")
+            self.login_frame.mensagem("Usuário ou senha incorretos")  # Mostra erro
 
-    #Função que cria o menu principal
+    # Cria o menu lateral com botões de navegação
     def menu_principal(self):
-        #Define a largura mínima e deixa quadrado
+        # Frame do menu lateral
         self.menu = ctk.CTkFrame(self, width=200, corner_radius=0)
-        #Ocupa apenas o lado esquerdo da tela
         self.menu.pack(side="left", fill="y")
 
-        # Configuração dos botões
+        # Estilo padrão dos botões
         botao_config = {
             "corner_radius": 0,
             "fg_color": "#2a2a2a",
@@ -63,18 +60,18 @@ class App(ctk.CTk):
             "height": 40
         }
 
-        #Cria os botões do menu
+        # Criação dos botões de navegação
         ctk.CTkLabel(self.menu, text="Menu", font=("Arial", 20)).pack(pady=20)
         ctk.CTkButton(self.menu, text="Início", command=self.abrir_inicio, **botao_config).pack()
         ctk.CTkButton(self.menu, text="Gráficos", command=self.abrir_graficos, **botao_config).pack()
         ctk.CTkButton(self.menu, text="Usuários", command=self.abrir_usuarios, **botao_config).pack()
         ctk.CTkButton(self.menu, text="Dados", command=self.abrir_pagina_bd, **botao_config).pack()
 
-        #Cria o container para ser ocupado pela página selecionada
+        # Frame onde as páginas serão exibidas
         self.container = ctk.CTkFrame(self)
         self.container.pack(side="left", fill='both', expand=True)
 
-    #Funções para abrir as páginas
+    # Funções para abrir as páginas correspondentes
     def abrir_inicio(self):
         self._abrir_pagina(Pagina_inicio)
 
@@ -82,6 +79,7 @@ class App(ctk.CTk):
         self._abrir_pagina(Pagina_graficos)
 
     def abrir_usuarios(self):
+        # Passa o callback para permitir edição de usuários
         def abrir_pagina_usuarios(parent):
             self.pagina_usuarios = Pagina_usuarios(parent, self.abrir_dialogo_edicao)
             return self.pagina_usuarios
@@ -91,29 +89,31 @@ class App(ctk.CTk):
     def abrir_pagina_bd(self):
         self._abrir_pagina(Pagina_bd)
 
+    # Função genérica para abrir qualquer página
     def _abrir_pagina(self, Pagina):
-        #Quando abrir uma nova página, destrói a atual
+        # Remove qualquer conteúdo anterior do container
         for widget in self.container.winfo_children():
             widget.destroy()
-        #Abre a página caso seja chamável
+        # Verifica se a página é uma função ou classe e a instancia
         if callable(Pagina):
             Pagina(self.container).pack(fill="both", expand=True)
         else:
             Pagina(self.container).pack(fill="both", expand=True)
 
-    #Função para abrir a tela login
+    # Mostra a tela de login
     def mostrar_login(self):
         if hasattr(self, "cadastro_frame"):
-            self.cadastro_frame.destroy()
+            self.cadastro_frame.destroy()  # Remove tela de cadastro se existir
         self.login_frame = Tela_login(self, self.entrar)
         self.login_frame.pack(fill="both", expand=True)
 
-    #Função para abrir a tela cadastro
+    # Mostra a tela de cadastro
     def mostrar_cadastro(self):
-        self.login_frame.destroy()
+        self.login_frame.destroy()  # Remove a tela de login
         self.cadastro_frame = Tela_cadastro(self, self.mostrar_login)
         self.cadastro_frame.pack(fill="both", expand=True)
 
+    # Abre o diálogo de edição de usuário
     def abrir_dialogo_edicao(self, id_usuario, nome_usuario, callback_atualizar_lista):
         EditarUsuarioDialog(
             parent=self,
@@ -123,8 +123,8 @@ class App(ctk.CTk):
             callback_status_label=self._atualizar_status_usuarios
         )
 
+    # Atualiza a mensagem de status da página de usuários (ex: após editar ou excluir alguém)
     def _atualizar_status_usuarios(self, mensagem, cor="white"):
-        # Supondo que você tenha uma referência para a página atual
         if hasattr(self, 'pagina_usuarios'):
             self.pagina_usuarios._atualizar_status_label(mensagem, cor)
 
@@ -132,109 +132,133 @@ class App(ctk.CTk):
 class Tela_login(ctk.CTkFrame):
     def __init__(self, parent, entrar_callback):
         super().__init__(parent)
-        self.entrar_callback = entrar_callback # Recebe o callback para entrar na app principal
-        #Cria um grid para estilizar a página inicio
+        self.entrar_callback = entrar_callback  # Função de callback que será chamada após login bem-sucedido
+
+        # Define estrutura de grid da tela de login
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure((0,1,2,3,4,5,6), weight=1)
 
-        #Cria o login frame e o define como grid
+        # Cria um frame central para conter os campos de login
         login_frame = ctk.CTkFrame(self)
         login_frame.grid(row=2, column=0, padx=20, pady=20, sticky="nsew")
         login_frame.grid_columnconfigure(0, weight=1)
         login_frame.grid_rowconfigure((0,1,2,3,4), weight=1)
 
+        # Título da seção de login
         ctk.CTkLabel(login_frame, text="Login", font=("Arial", 28, "bold")).grid(row=0, column=0, pady=20, sticky="s")
 
+        # Campo para entrada do nome de usuário
         self.entrada_usuario = ctk.CTkEntry(login_frame, placeholder_text="Usuário", width=200)
         self.entrada_usuario.grid(row=1, column=0, pady=10)
 
+        # Campo de senha (ocultando o texto com '*')
         self.entrada_senha = ctk.CTkEntry(login_frame, placeholder_text="Senha", show="*", width=200)
         self.entrada_senha.grid(row=2, column=0, pady=10)
 
+        # Botão de login
         ctk.CTkButton(login_frame, text="Entrar", command=self._fazer_login,
                       font=("Arial", 16, "bold"), fg_color="#007bff", hover_color="#0056b3").grid(row=3, column=0, pady=15)
 
+        # Label que mostra mensagens de erro
         self.label_erro = ctk.CTkLabel(login_frame, text="", text_color="red", font=("Arial", 12))
         self.label_erro.grid(row=4, column=0, pady=5, sticky="n")
 
-        #Link para criar conta
+        # Texto e botão para quem ainda não tem conta
         ctk.CTkLabel(login_frame, text="Não tem uma conta?", font=("Arial", 14)).grid(row=5, column=0, pady=(20,5))
         ctk.CTkButton(login_frame, text="Criar Conta", command=lambda: self.master.mostrar_cadastro(),
                       font=("Arial", 14), fg_color="transparent", text_color="#007bff", hover_color="#3a3a3a").grid(row=6, column=0, pady=(0,10))
 
     def _fazer_login(self):
-        #Obtém as entradas do usuário sem espaços
+        # Obtém os valores digitados e remove espaços em branco
         usuario = self.entrada_usuario.get().strip()
         senha = self.entrada_senha.get().strip()
 
+        # Verifica se os campos estão preenchidos
         if not usuario or not senha:
             self.mensagem("Por favor, preencha todos os campos.")
             return
 
+        # Busca usuário no banco de dados
         user = buscar_usuario_senha(usuario, senha)
         if user:
-            self.entrar_callback(usuario, senha) #Chama o callback passado pelo App
+            self.entrar_callback(usuario, senha)  # Login bem-sucedido -> entra na aplicação
         else:
-            self.mensagem("Usuário ou senha incorretos.")
+            self.mensagem("Usuário ou senha incorretos.")  # Mensagem de erro
 
-    #Muda mensagem em caso de erro
     def mensagem(self, msg, cor="red"):
+        # Mostra uma mensagem (erro ou sucesso) com a cor definida
         self.label_erro.configure(text=msg, text_color=cor)
 
 # Tela de cadastro
 class Tela_cadastro(ctk.CTkFrame):
     def __init__(self, parent, mostrar_login_callback):
         super().__init__(parent)
-        self.mostrar_login_callback = mostrar_login_callback # Callback para voltar à tela de login
+        self.mostrar_login_callback = mostrar_login_callback  # Callback para voltar à tela de login
+
+        # Define a estrutura de grid da tela
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure((0,1,2,3,4,5), weight=1)
 
+        # Cria o frame onde os campos de cadastro ficam
         cadastro_frame = ctk.CTkFrame(self)
         cadastro_frame.grid(row=1, column=0, padx=20, pady=20, sticky="nsew")
         cadastro_frame.grid_columnconfigure(0, weight=1)
         cadastro_frame.grid_rowconfigure((0,1,2,3,4), weight=1)
 
+        # Título da seção de cadastro
         ctk.CTkLabel(cadastro_frame, text="Criar Nova Conta", font=("Arial", 28, "bold")).grid(row=0, column=0, pady=20, sticky="s")
 
+        # Campo para novo nome de usuário
         self.entrada_usuario = ctk.CTkEntry(cadastro_frame, placeholder_text="Novo Usuário", width=200)
         self.entrada_usuario.grid(row=1, column=0, pady=10)
 
+        # Campo para senha da nova conta
         self.entrada_senha = ctk.CTkEntry(cadastro_frame, placeholder_text="Senha", show="*", width=200)
         self.entrada_senha.grid(row=2, column=0, pady=10)
 
+        # Botão para cadastrar o novo usuário
         ctk.CTkButton(cadastro_frame, text="Cadastrar", command=self._cadastrar,
                       font=("Arial", 16, "bold"), fg_color="#28a745", hover_color="#218838").grid(row=3, column=0, pady=15)
 
+        # Mensagens de erro ou sucesso
         self.label_mensagem = ctk.CTkLabel(cadastro_frame, text="", text_color="red", font=("Arial", 12))
         self.label_mensagem.grid(row=4, column=0, pady=5, sticky="n")
 
-        # Link para voltar ao login
+        # Texto e botão para voltar ao login
         ctk.CTkLabel(cadastro_frame, text="Já tem uma conta?", font=("Arial", 14)).grid(row=5, column=0, pady=(20,5))
         ctk.CTkButton(cadastro_frame, text="Voltar ao Login", command=self.mostrar_login_callback,
                       font=("Arial", 14), fg_color="transparent", text_color="#007bff", hover_color="#3a3a3a").grid(row=6, column=0, pady=(0,10))
 
+        def _cadastrar(self):
+        # Obtém entradas e remove espaços em branco
+            usuario = self.entrada_usuario.get().strip()
+            senha = self.entrada_senha.get().strip()
 
-    def _cadastrar(self):
-        usuario = self.entrada_usuario.get().strip()
-        senha = self.entrada_senha.get().strip()
+            # Verifica se os campos estão preenchidos
+            if not usuario or not senha:
+                self.mensagem("Por favor, preencha todos os campos.")
+                return
 
-        if not usuario or not senha:
-            self.mensagem("Por favor, preencha todos os campos.")
-            return
+            try:
+                # Tenta adicionar o novo usuário ao banco de dados
+                adicionar_usuario(usuario, senha)
+                self.mensagem("Conta criada com sucesso! Faça login.", "green")
+                
+                # Limpa os campos após sucesso
+                self.entrada_usuario.delete(0, ctk.END)
+                self.entrada_senha.delete(0, ctk.END)
 
-        try:
-            adicionar_usuario(usuario, senha)
-            self.mensagem("Conta criada com sucesso! Faça login.", "green")
-            #Limpa campos após sucesso
-            self.entrada_usuario.delete(0, ctk.END)
-            self.entrada_senha.delete(0, ctk.END)
-            self.master.after(1000, self.mostrar_login_callback) # Volta ao login após um pequeno atraso
-        except ValueError as e:
-            self.mensagem(str(e))
-        except Exception as e:
-            self.mensagem(f"Erro ao cadastrar: {e}")
+                # Retorna para a tela de login após 1 segundo
+                self.master.after(1000, self.mostrar_login_callback)
+            except ValueError as e:
+                # Erro esperado, como usuário já existente
+                self.mensagem(str(e))
+            except Exception as e:
+                # Erro inesperado
+                self.mensagem(f"Erro ao cadastrar: {e}")
 
     def mensagem(self, msg, cor="red"):
+        # Exibe mensagem com a cor desejada
         self.label_mensagem.configure(text=msg, text_color=cor)
 
 # Página inicial com rolagem
@@ -488,7 +512,6 @@ class Pagina_graficos(ctk.CTkFrame):
         self.filtro_atividades.set("Todas as Atividades") # Definir valor padrão
         self.filtro_atividades.grid(row=6, column=1, pady=5, padx=5, sticky="ew") 
 
-
         # Gases
         gases_disponiveis = obter_gases() # Obtém os gases com nomes formatados
         ctk.CTkLabel(self.scrollable_frame, text="Escolha o tipo de gás (opcional):", font=("Arial", 14)).grid(row=7, column=1, pady=5) 
@@ -655,210 +678,265 @@ class Pagina_graficos(ctk.CTkFrame):
 class EditarUsuarioDialog(ctk.CTkToplevel):
     def __init__(self, parent, id_usuario, nome_atual, callback_atualizar_lista, callback_status_label):
         super().__init__(parent)
-        self.grab_set() # Make the dialog modal
-        self.transient(parent) # Ensure the dialog closes with the parent window
+
+        # Tentativa de carregar e definir o ícone da janela
+        try:
+            icon_image = Image.open("imagens/efeito_estufa_icone.png")
+            icon_photo = ImageTk.PhotoImage(icon_image)
+            self.iconphoto(False, icon_photo)
+            self._icon_image_ref = icon_photo  # Referência salva para não ser coletada pelo garbage collector
+        except Exception as e:
+            print("Erro ao carregar ícone:", e)
+
+        # Define o comportamento modal (bloqueia outras janelas até fechar)
+        self.grab_set()
+        # Fecha junto com a janela principal
+        self.transient(parent)
+        # Define o título da janela com o nome do usuário sendo editado
         self.title(f"Editar Usuário: {nome_atual}")
+
+        # Armazena os dados e callbacks recebidos como parâmetros
         self.id_usuario = id_usuario
         self.callback_atualizar_lista = callback_atualizar_lista
         self.callback_status_label = callback_status_label
 
-        self.grid_columnconfigure(1, weight=1) # Allow second column to expand
-        self.grid_rowconfigure((0, 1, 2, 3), weight=0) # Rows for labels and entries
+        # Configuração do layout
+        self.grid_columnconfigure(1, weight=1)  # A segunda coluna pode se expandir
+        self.grid_rowconfigure((0, 1, 2, 3), weight=0)  # Linhas fixas
 
+        # Título na parte superior da janela
         ctk.CTkLabel(self, text=f"Editando usuário ID: {id_usuario}", font=("Arial", 18, "bold")).grid(row=0, column=0, columnspan=2, pady=15)
 
-        # Username field
+        # Campo para editar o nome de usuário
         ctk.CTkLabel(self, text="Novo Nome:", font=("Arial", 14)).grid(row=1, column=0, padx=10, pady=5, sticky="w")
         self.entrada_novo_usuario = ctk.CTkEntry(self, placeholder_text="Novo nome de usuário")
-        self.entrada_novo_usuario.insert(0, nome_atual) # Pre-fill with current username
+        self.entrada_novo_usuario.insert(0, nome_atual)  # Preenche com o nome atual
         self.entrada_novo_usuario.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
 
-        # Password field
+        # Campo para definir nova senha
         ctk.CTkLabel(self, text="Nova Senha:", font=("Arial", 14)).grid(row=2, column=0, padx=10, pady=5, sticky="w")
         self.entrada_nova_senha = ctk.CTkEntry(self, placeholder_text="Nova senha", show="*")
         self.entrada_nova_senha.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
 
-        # Button Frame
+        # Frame para os botões
         btn_frame = ctk.CTkFrame(self, fg_color="transparent")
         btn_frame.grid(row=3, column=0, columnspan=2, pady=20)
 
+        # Botão para salvar as alterações
         ctk.CTkButton(btn_frame, text="Salvar Alterações", command=self._salvar_edicao,
                       font=("Arial", 16, "bold"), fg_color="#007bff", hover_color="#0056b3").pack(side="left", padx=10)
+
+        # Botão para cancelar e fechar a janela
         ctk.CTkButton(btn_frame, text="Cancelar", command=self.destroy,
                       font=("Arial", 16, "bold"), fg_color="gray", hover_color="darkgray").pack(side="right", padx=10)
 
-        # Center the dialog on the parent window
+        # Centraliza a janela em relação à janela principal
         self.update_idletasks()
         x = parent.winfo_x() + (parent.winfo_width() / 2) - (self.winfo_width() / 2)
         y = parent.winfo_y() + (parent.winfo_height() / 2) - (self.winfo_height() / 2)
         self.geometry(f"+{int(x)}+{int(y)}")
 
+    # Função chamada ao clicar em "Salvar Alterações"
     def _salvar_edicao(self):
         novo_nome = self.entrada_novo_usuario.get().strip()
         nova_senha = self.entrada_nova_senha.get().strip()
 
+        # Verifica se os campos foram preenchidos
         if not novo_nome or not nova_senha:
             CTkMessagebox(title="Erro de Validação", message="Por favor, preencha o nome de usuário e a senha.", icon="warning")
             return
 
         try:
+            # Atualiza os dados do usuário no banco de dados
             atualizar_usuario(self.id_usuario, novo_nome, nova_senha)
-            self.callback_atualizar_lista() # Refresh the list in the main window
+
+            # Atualiza a lista na janela principal e mostra mensagem de sucesso
+            self.callback_atualizar_lista()
             self.callback_status_label(f"Usuário '{novo_nome}' atualizado com sucesso!", "green")
-            self.destroy() # Close the dialog
-        except ValueError as e: # Catch the specific error from 'atualizar_usuario'
+            self.destroy()  # Fecha a janela de edição
+        except ValueError as e:
+            # Mostra mensagem de erro se houver problema conhecido (ex: nome já existe)
             CTkMessagebox(title="Erro", message=str(e), icon="cancel")
         except Exception as e:
+            # Mostra erro genérico caso ocorra algo inesperado
             CTkMessagebox(title="Erro Inesperado", message=f"Ocorreu um erro ao atualizar: {e}", icon="cancel")
 
 # Página de gerenciamento de usuários
 class Pagina_usuarios(ctk.CTkFrame):
     def __init__(self, parent, editar_callback):
         super().__init__(parent)
-        self.editar_callback = editar_callback
+        self.editar_callback = editar_callback  # Função chamada ao clicar em "Editar"
+        
+        # Configura layout para ocupar todo o espaço disponível
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
+        # Frame com rolagem para conter todo o conteúdo da página
         self.scroll_geral = ctk.CTkScrollableFrame(self)
         self.scroll_geral.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
         self.scroll_geral.grid_columnconfigure(0, weight=1)
 
+        # Título da seção de gerenciamento
         ctk.CTkLabel(self.scroll_geral, text="Gerenciamento de Usuários", font=("Arial", 24, "bold")).pack(pady=20)
 
+        # Área que lista os usuários cadastrados com rolagem separada
         self.lista_scroll = ctk.CTkScrollableFrame(self.scroll_geral, height=250, corner_radius=10, fg_color="gray20")
         self.lista_scroll.pack(pady=10, fill="x", expand=False, padx=20)
 
-        # Input fields for new user
+        # Campos de entrada para adicionar novo usuário
         input_frame = ctk.CTkFrame(self.scroll_geral)
         input_frame.pack(pady=10, fill="x", padx=20)
         input_frame.grid_columnconfigure(0, weight=1)
         input_frame.grid_columnconfigure(1, weight=3)
 
+        # Campo: nome do usuário
         ctk.CTkLabel(input_frame, text="Novo Usuário:", font=("Arial", 14)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
         self.usuario = ctk.CTkEntry(input_frame, placeholder_text="Nome de usuário")
         self.usuario.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
 
+        # Campo: senha do usuário
         ctk.CTkLabel(input_frame, text="Senha:", font=("Arial", 14)).grid(row=1, column=0, padx=5, pady=5, sticky="w")
         self.senha = ctk.CTkEntry(input_frame, placeholder_text="Senha", show="*")
         self.senha.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
 
-
+        # Mensagem de status (sucesso/erro)
         self.mensagem_label = ctk.CTkLabel(self.scroll_geral, text="", font=("Arial", 12))
         self.mensagem_label.pack()
 
+        # Botão para adicionar novo usuário
         ctk.CTkButton(self.scroll_geral, text="Adicionar Usuário", command=self.adicionar,
                       font=("Arial", 16, "bold"), fg_color="#28a745", hover_color="#218838").pack(pady=15)
 
+        # Chamada inicial para preencher a lista de usuários
         self.atualizar_lista()
 
+    # Atualiza a mensagem de status com texto e cor
     def _atualizar_status_label(self, message, color="white"):
         self.mensagem_label.configure(text=message, text_color=color)
 
+    # Atualiza visualmente a lista de usuários
     def atualizar_lista(self):
+        # Remove todos os widgets antigos da lista
         for widget in self.lista_scroll.winfo_children():
             widget.destroy()
 
-        usuarios = listar_usuarios()
+        usuarios = listar_usuarios()  # Busca os usuários do banco
         if not usuarios:
             ctk.CTkLabel(self.lista_scroll, text="Nenhum usuário cadastrado.", font=("Arial", 14), text_color="gray").pack(pady=20)
             return
 
-        for id_usuario, usuario in usuarios: # Ignore password for display
+        # Para cada usuário, cria uma linha com dados e botões de ação
+        for id_usuario, usuario in usuarios:
             linha = ctk.CTkFrame(self.lista_scroll, fg_color="gray25", corner_radius=8)
             linha.pack(fill="x", pady=4, padx=8)
             linha.grid_columnconfigure(0, weight=1)
 
+            # Exibe ID e nome do usuário
             ctk.CTkLabel(linha, text=f"ID: {id_usuario} | Usuário: {usuario}", anchor="w", font=("Arial", 14)).grid(row=0, column=0, padx=10, pady=5, sticky="ew")
 
+            # Frame com botões "Editar" e "Excluir"
             btn_frame = ctk.CTkFrame(linha, fg_color="transparent")
             btn_frame.grid(row=0, column=1, padx=5, pady=5, sticky="e")
 
-            # Updated call to editar_callback, passing its own update function
+            # Botão para editar, usando o callback passado no construtor
             ctk.CTkButton(btn_frame, text="Editar", font=("Arial", 12, "bold"), fg_color="#007bff", hover_color="#0056b3",
-                        command=lambda id=id_usuario, nome=usuario: self.editar_callback(id, nome, self.atualizar_lista)).pack(side="left", padx=3)
-            ctk.CTkButton(btn_frame, text="Excluir", font=("Arial", 12, "bold"), fg_color="red", hover_color="darkred",
-                        command=lambda id=id_usuario: self.excluir(id)).pack(side="left", padx=3)
+                          command=lambda id=id_usuario, nome=usuario: self.editar_callback(id, nome, self.atualizar_lista)).pack(side="left", padx=3)
 
+            # Botão para excluir usuário
+            ctk.CTkButton(btn_frame, text="Excluir", font=("Arial", 12, "bold"), fg_color="red", hover_color="darkred",
+                          command=lambda id=id_usuario: self.excluir(id)).pack(side="left", padx=3)
+
+    # Lógica para adicionar novo usuário ao sistema
     def adicionar(self):
         usuario = self.usuario.get().strip()
         senha = self.senha.get().strip()
+
         if usuario and senha:
             try:
-                adicionar_usuario(usuario, senha)
-                self.atualizar_lista()
+                adicionar_usuario(usuario, senha)  # Função externa para adicionar ao banco
+                self.atualizar_lista()  # Atualiza a lista de usuários na tela
                 self.usuario.delete(0, "end")
                 self.senha.delete(0, "end")
                 self._atualizar_status_label("Usuário adicionado com sucesso!", "green")
-            except ValueError as e: # Catch the specific error from 'adicionar_usuario'
-                self._atualizar_status_label(str(e), "red")
+            except ValueError as e:
+                self._atualizar_status_label(str(e), "red")  # Erro conhecido (ex: usuário já existe)
             except Exception as e:
-                self._atualizar_status_label(f"Erro ao adicionar: {e}", "red")
+                self._atualizar_status_label(f"Erro ao adicionar: {e}", "red")  # Erro inesperado
         else:
             self._atualizar_status_label("Por favor, preencha todos os campos.", "red")
 
+    # Lógica para excluir um usuário com confirmação
     def excluir(self, id_usuario):
         msg = CTkMessagebox(title="Confirmação de Exclusão", message=f"Tem certeza que deseja excluir o usuário ID {id_usuario}?",
                             icon="question", option_1="Não", option_2="Sim")
         response = msg.get()
         if response == "Sim":
-            deletar_usuario(id_usuario)
+            deletar_usuario(id_usuario)  # Função externa que remove o usuário do banco
             self.atualizar_lista()
             self._atualizar_status_label(f"Usuário ID {id_usuario} excluído com sucesso!", "green")
 
 class Pagina_bd(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
+        
+        # Configurações iniciais do frame principal
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
+        # Frame rolável principal
         self.scroll_geral = ctk.CTkScrollableFrame(self)
         self.scroll_geral.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
         self.scroll_geral.grid_columnconfigure(0, weight=1)
 
-        # Título
+        # Título da página
         ctk.CTkLabel(self.scroll_geral, text="Emissões de Gases do Efeito Estufa", font=("Arial", 24, "bold")).pack(pady=20)
 
-        # Container para os campos de entrada
+        # Frame de entradas de dados
         input_frame = ctk.CTkFrame(self.scroll_geral)
         input_frame.pack(pady=10, fill="x", padx=20)
         input_frame.grid_columnconfigure(0, weight=1)
         input_frame.grid_columnconfigure(1, weight=3)
 
+        # Criação dinâmica dos campos de entrada
         self.entradas = {}
         campos = ["Ano", "Gás", "Atividade Econômica", "Emissão (toneladas)"]
         for i, campo in enumerate(campos):
             label = ctk.CTkLabel(input_frame, text=f"{campo}:", font=("Arial", 14))
             label.grid(row=i, column=0, padx=5, pady=5, sticky="w")
+
             entrada = ctk.CTkEntry(input_frame, placeholder_text=campo)
             entrada.grid(row=i, column=1, padx=5, pady=5, sticky="ew")
             self.entradas[campo] = entrada
 
-        # Botão adicionar
+        # Botão para adicionar emissão
         ctk.CTkButton(self.scroll_geral, text="Adicionar Emissão", command=self.adicionar_emissao,
                       font=("Arial", 16, "bold"), fg_color="#28a745", hover_color="#218838").pack(pady=15)
 
-        # Rótulo para mensagens de status
+        # Label de status para mensagens de erro ou sucesso
         self.status_label = ctk.CTkLabel(self.scroll_geral, text="", font=("Arial", 12))
         self.status_label.pack(pady=5)
 
-        # Lista de registros (com scroll separado)
+        # Título da lista de registros
         ctk.CTkLabel(self.scroll_geral, text="Últimas 50 Emissões", font=("Arial", 18, "bold")).pack(pady=10)
+
+        # Frame rolável com os dados
         self.lista_scroll = ctk.CTkScrollableFrame(self.scroll_geral, height=300, corner_radius=10, fg_color="gray20")
         self.lista_scroll.pack(pady=10, fill="x", expand=True, padx=20)
 
+        # Carrega os dados iniciais
         self.atualizar_lista()
 
+    # Limpa os campos de entrada
     def _limpar_entradas(self):
-        """Limpa todos os campos de entrada."""
         for entrada in self.entradas.values():
             entrada.delete(0, ctk.END)
 
+    # Atualiza o status da operação
     def _atualizar_status_label(self, message, color="white"):
-        """Atualiza o rótulo de status com uma mensagem e cor."""
         self.status_label.configure(text=message, text_color=color)
 
+    # Verifica se os campos "Ano" e "Emissão" são numéricos
     def _validar_entradas(self, ano, emissao):
-        """Valida se 'ano' é um número inteiro e 'emissao' é um número (float ou int)."""
         try:
             int(ano)
         except ValueError:
@@ -869,38 +947,43 @@ class Pagina_bd(ctk.CTkFrame):
         except ValueError:
             self.status_label.configure(text="Erro: A 'Emissão' deve ser um número.", text_color="red")
             return False
-        self.status_label.configure(text="") # Limpa a mensagem de erro se a validação passar
         return True
 
+    # Adiciona nova entrada ao banco de dados
     def adicionar_emissao(self):
-        """Obtém dados das entradas e adiciona uma nova emissão ao banco de dados."""
         ano = self.entradas["Ano"].get()
         gas = self.entradas["Gás"].get()
         atividade = self.entradas["Atividade Econômica"].get()
         emissao = self.entradas["Emissão (toneladas)"].get()
 
+        # Verifica se todos os campos foram preenchidos
         if not all([ano, gas, atividade, emissao]):
             self._atualizar_status_label("Erro: Todos os campos são obrigatórios.", "red")
             return
 
+        # Validação e inserção no banco
         if self._validar_entradas(ano, emissao):
             adicionar_bd(ano, gas, atividade, float(emissao))
-            self.atualizar_lista()
             self._limpar_entradas()
             self._atualizar_status_label("Emissão adicionada com sucesso!", "green")
-            atualizar_id_com_rowid("efeito_estufa.db","emissoes")
+            atualizar_id_com_rowid("efeito_estufa.db", "emissoes")
+            self.atualizar_lista()
 
+    # Atualiza a lista exibida
     def atualizar_lista(self):
-        """Atualiza a exibição da lista de emissões no frame."""
+        # Limpa os widgets existentes
         for widget in self.lista_scroll.winfo_children():
             widget.destroy()
 
+        # Recarrega os dados do banco
         emissao_dados = listar_bd()
-        atualizar_id_com_rowid("efeito_estufa.db","emissoes")
+        atualizar_id_com_rowid("efeito_estufa.db", "emissoes")
+
         if not emissao_dados:
             ctk.CTkLabel(self.lista_scroll, text="Nenhum registro encontrado.", font=("Arial", 14), text_color="gray").pack(pady=20)
             return
 
+        # Gera interface com dados
         for id_emissao, ano, gas, atividade, emissao in emissao_dados:
             linha = ctk.CTkFrame(self.lista_scroll, fg_color="gray25", corner_radius=8)
             linha.pack(fill="x", pady=4, padx=8)
@@ -912,13 +995,15 @@ class Pagina_bd(ctk.CTkFrame):
             btn_frame = ctk.CTkFrame(linha, fg_color="transparent")
             btn_frame.grid(row=0, column=1, padx=5, pady=5, sticky="e")
 
+            # Botões de ação
             ctk.CTkButton(btn_frame, text="Editar", font=("Arial", 12, "bold"), fg_color="#007bff", hover_color="#0056b3",
                           command=lambda i=id_emissao, a=ano, g=gas, act=atividade, e=emissao: self.editar_emissao_dialog(i, a, g, act, e)).pack(side="left", padx=3)
+
             ctk.CTkButton(btn_frame, text="Excluir", font=("Arial", 12, "bold"), fg_color="red", hover_color="darkred",
                           command=lambda i=id_emissao: self.excluir_emissao(i)).pack(side="left", padx=3)
 
+    # Exclui um registro após confirmação
     def excluir_emissao(self, id_emissao):
-        """Confirma e exclui um registro de emissão."""
         msg = CTkMessagebox(title="Confirmação de Exclusão", message=f"Tem certeza que deseja excluir a emissão ID {id_emissao}?",
                             icon="question", option_1="Não", option_2="Sim")
         response = msg.get()
@@ -927,82 +1012,107 @@ class Pagina_bd(ctk.CTkFrame):
             self.atualizar_lista()
             self._atualizar_status_label(f"Emissão ID {id_emissao} excluída com sucesso!", "green")
 
+    # Abre janela de edição de registro
     def editar_emissao_dialog(self, id_emissao, ano, gas, atividade, emissao):
-        """Abre uma nova janela CTkTopLevel para editar um registro de emissão."""
-        # Passa referências para as funções de atualização para o diálogo
-        dialog = EditarEmissaoDialog(self.master, id_emissao, ano, gas, atividade, emissao,
-                                     self.atualizar_lista, self._atualizar_status_label)
-        self.wait_window(dialog) # Aguarda o diálogo ser fechado antes de continuar
+        dialog = EditarEmissaoDialog(
+            self.master, id_emissao, ano, gas, atividade, emissao,
+            self.atualizar_lista, self._atualizar_status_label
+        )
+        self.wait_window(dialog)
 
+# Define uma janela secundária (popup) para editar os dados de uma emissão já existente
 class EditarEmissaoDialog(ctk.CTkToplevel):
     def __init__(self, parent, id_emissao, ano, gas, atividade, emissao, callback_atualizar_lista, callback_status_label):
-        super().__init__(parent)
-        self.grab_set()  # Impede interações com a janela principal
-        self.transient(parent) # Garante que o diálogo feche com a janela principal
-        self.title(f"Editar Emissão ID: {id_emissao}")
+        super().__init__(parent)  # Inicializa a janela toplevel com o parent (janela principal)
+
+        # Tentativa de carregar e definir um ícone para a janela
+        try:
+            icon_image = Image.open("imagens/efeito_estufa_icone.png")
+            icon_photo = ImageTk.PhotoImage(icon_image)
+            self.iconphoto(False, icon_photo)  # Define o ícone da janela
+            self._icon_image_ref = icon_photo  # Mantém referência para não ser coletado pelo garbage collector
+        except Exception as e:
+            print("Erro ao carregar ícone:", e)  # Exibe erro se o ícone não puder ser carregado
+            
+        self.grab_set()  # Impede interação com a janela principal enquanto essa estiver aberta
+        self.transient(parent)  # Faz com que essa janela seja fechada junto com a principal
+        self.title(f"Editar Emissão ID: {id_emissao}")  # Define título da janela
+
+        # Armazena informações e funções para uso posterior
         self.id_emissao = id_emissao
         self.callback_atualizar_lista = callback_atualizar_lista
         self.callback_status_label = callback_status_label
 
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure((0,1,2,3,4,5), weight=0) # Linhas de entrada
+        # Configurações do layout de grade
+        self.grid_columnconfigure(1, weight=1)  # Segunda coluna pode expandir
+        self.grid_rowconfigure((0,1,2,3,4,5), weight=0)  # Linhas fixas (sem expansão)
 
+        # Título da janela
         ctk.CTkLabel(self, text=f"Editando Emissão ID: {id_emissao}", font=("Arial", 18, "bold")).grid(row=0, column=0, columnspan=2, pady=15)
 
-        self.entradas = {}
+        # Campos do formulário com seus respectivos valores iniciais
+        self.entradas = {}  # Dicionário para guardar os widgets de entrada
         campos = {"Ano": ano, "Gás": gas, "Atividade Econômica": atividade, "Emissão (toneladas)": emissao}
 
+        # Loop para criar os campos de entrada (labels + entries)
         for i, (campo, valor) in enumerate(campos.items()):
             ctk.CTkLabel(self, text=f"{campo}:", font=("Arial", 14)).grid(row=i+1, column=0, padx=10, pady=5, sticky="w")
             entrada = ctk.CTkEntry(self, placeholder_text=campo)
-            entrada.insert(0, str(valor))
+            entrada.insert(0, str(valor))  # Pré-preenche o campo com o valor atual
             entrada.grid(row=i+1, column=1, padx=10, pady=5, sticky="ew")
-            self.entradas[campo] = entrada
+            self.entradas[campo] = entrada  # Armazena o widget de entrada para uso posterior
 
-        # Botões de ação
+        # Frame para os botões (Salvar e Cancelar)
         btn_frame = ctk.CTkFrame(self, fg_color="transparent")
         btn_frame.grid(row=len(campos) + 1, column=0, columnspan=2, pady=20)
 
+        # Botão de salvar alterações
         ctk.CTkButton(btn_frame, text="Salvar Alterações", command=self._salvar_edicao,
                       font=("Arial", 16, "bold"), fg_color="#007bff", hover_color="#0056b3").pack(side="left", padx=10)
+
+        # Botão de cancelar (fecha a janela)
         ctk.CTkButton(btn_frame, text="Cancelar", command=self.destroy,
                       font=("Arial", 16, "bold"), fg_color="gray", hover_color="darkgray").pack(side="right", padx=10)
 
-        # Posiciona o diálogo no centro da tela pai
-        self.update_idletasks()
+        # Centraliza a janela em relação à janela principal
+        self.update_idletasks()  # Atualiza layout antes de posicionar
         x = parent.winfo_x() + (parent.winfo_width() / 2) - (self.winfo_width() / 2)
         y = parent.winfo_y() + (parent.winfo_height() / 2) - (self.winfo_height() / 2)
-        self.geometry(f"+{int(x)}+{int(y)}")
+        self.geometry(f"+{int(x)}+{int(y)}")  # Posiciona a janela no centro da principal
 
+    # Valida se os campos "ano" e "emissão" têm valores numéricos corretos
     def _validar_entradas(self, ano, emissao):
-        """Valida se 'ano' é um número inteiro e 'emissao' é um número (float ou int)."""
         try:
-            int(ano)
+            int(ano)  # Verifica se o ano é inteiro
         except ValueError:
             CTkMessagebox(title="Erro de Validação", message="Erro: O 'Ano' deve ser um número inteiro.", icon="warning")
             return False
         try:
-            float(emissao)
+            float(emissao)  # Verifica se a emissão é um número (int ou float)
         except ValueError:
             CTkMessagebox(title="Erro de Validação", message="Erro: A 'Emissão' deve ser um número.", icon="warning")
             return False
-        return True
+        return True  # Entradas válidas
 
+    # Lógica para salvar as edições feitas pelo usuário
     def _salvar_edicao(self):
+        # Captura os dados inseridos nos campos
         novo_ano = self.entradas["Ano"].get()
         novo_gas = self.entradas["Gás"].get()
         nova_atividade = self.entradas["Atividade Econômica"].get()
         nova_emissao = self.entradas["Emissão (toneladas)"].get()
 
+        # Verifica se todos os campos foram preenchidos
         if not all([novo_ano, novo_gas, nova_atividade, nova_emissao]):
             CTkMessagebox(title="Erro de Validação", message="Todos os campos são obrigatórios.", icon="warning")
             return
 
+        # Se os dados forem válidos, atualiza o banco
         if self._validar_entradas(novo_ano, nova_emissao):
-            atualizar_bd(self.id_emissao, novo_ano, novo_gas, nova_atividade, float(nova_emissao))
-            self.callback_atualizar_lista() # Chama a função para atualizar a lista na janela principal
-            self.callback_status_label(f"Emissão ID {self.id_emissao} atualizada com sucesso!", "green")
-            self.destroy() # Fecha a janela de edição
+            atualizar_bd(self.id_emissao, novo_ano, novo_gas, nova_atividade, float(nova_emissao))  # Atualiza no BD
+            self.callback_atualizar_lista()  # Atualiza a lista na interface principal
+            self.callback_status_label(f"Emissão ID {self.id_emissao} atualizada com sucesso!", "green")  # Mensagem de sucesso
+            self.destroy()  # Fecha a janela de edição
 
 # Inicializa a aplicação
 if __name__ == "__main__":

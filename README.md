@@ -1,5 +1,11 @@
 # ProjetoFinal-RAD
 
+**Equipe:**
+•	Antônio Marcolino da Silva Neto – 202402821938
+•	Igor Claudenor Araújo Neri Filho – 202402399667
+•	Wildson da Silva Timóteo - 202403013436
+
+
 # 1. Título do Projeto 
 "Estufatos"
 
@@ -207,4 +213,4 @@ Capturas de tela estarão disponíveis na pasta /screenshots do repositório Git
 
 **Relatório:**
 
-[Relatorio-Final.pdf](https://github.com/user-attachments/files/20728896/Relatorio-Final.pdf)
+[Relatorio-Final.pdf](https://github.com/user-attachments/files/20868361/Relatorio-Final.pdf)

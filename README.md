@@ -1,8 +1,11 @@
 # ProjetoFinal-RAD
 
 **Equipe:**
+
 •	Antônio Marcolino da Silva Neto – 202402821938
+
 •	Igor Claudenor Araújo Neri Filho – 202402399667
+
 •	Wildson da Silva Timóteo - 202403013436
 
 
